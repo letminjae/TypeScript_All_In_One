@@ -1,0 +1,23 @@
+{
+  "name": "TS_All_In_One",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/letminjae/TypeScript_All_In_One.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/letminjae/TypeScript_All_In_One/issues"
+  },
+  "homepage": "https://github.com/letminjae/TypeScript_All_In_One#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
+}
