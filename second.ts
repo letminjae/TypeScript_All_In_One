@@ -140,3 +140,43 @@ let optionalObj : {
 } = { a: 'hello', b: 'world'}
 
 optionalObj = { a: "hello" }
+
+//---------------------------------------------------- 220728 -----------------------------------------
+
+//제네릭은 왜 필요한가??
+
+function unionAdd(x: string | number, y: string | number) : string | number { return x + y };
+
+// unionAdd(1, "2"), unionAdd("1", 2) 가 될 가능성이 있기에 unionAdd 함수는 잘못되었다.
+
+// 안되게 하려면??? 방법을 고안하다 타입스크립트는 제네릭을 만들었고, 제네릭을 사용해야 해결가능
+// 지금 현재 타입이 무엇인지는 모르겠으나 나중에 정할 수 있게 만듬
+// 제네릭 사용법 = 꺽쇠 사용해서 타입을 꺽쇠 안 문자로 만들어준다
+
+function genericAdd<T>(x : T, y: T): T {
+    return x + y
+};
+
+genericAdd(1, 2);
+genericAdd("1", "2");
+
+// T가 같은 타입인건 알겠는데,, 그럼 이럴때는?
+genericAdd(true, false); //같은 불린이라 타입은 맞지만 리턴값은 ???
+
+// 이런것을 방지하기 위해 우리는 제네릭에 조건을 걸수 있다 => extends 사용!
+function genericAdd2<V extends string | number>(x: V, y: V) : V {
+    return x + y
+}
+
+// 제네릭 실전예제
+interface genericArray<K> {
+    forEach(callbackfn : (value : K, index : number, array: K[]) => void, thisArg? : any) : void;
+    //결국 forEach는 forEach(callbackfn, thisArg) 인데 타입 설정을 해놓아서 복잡할 뿐, 모든 제네릭은 잘 찾아서 타입만 추론한다면 쉽고 편리한 기능이다
+}
+
+[1,2,3].forEach((value) => { console.log(value) }); // 1,2,3 number 타입 감지
+['1','2','3'].forEach((value) => { console.log(value) }); // '1','2','3' string 타입 감지
+[true,false,true].forEach((value) => { console.log(value) }); // boolean 타입 감지
+['123',123,true].forEach((value) => { console.log(value) }); // string, number, boolean 타입 감지
+
+
