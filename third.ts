@@ -73,3 +73,59 @@ declare const axios : Axios;
     }
 })();
 
+//infer는 타입 내에서 추론된 값으로 다시 새로운 타입을 만드는 것(밑에 utility types 참고).
+//타입스크립트는 건망증이 심하다
+try {
+  await axios.get();
+} catch (err) {
+  console.error(err.response?.data);
+}
+
+type Partial<T> = {
+    [P in keyof T]?: T[P];
+};
+
+//Required
+type Required<T> = {
+    [P in keyof T]-?: T[P];
+};
+
+//ReadOnly
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P];
+};
+
+//Pick
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+
+//Record
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+
+//Exclude
+type Exclude<T, U> = T extends U ? never : T;
+
+//Extract
+type Extract<T, U> = T extends U ? T : never;
+
+//Omit
+
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
+
+//NonNullable
+type NonNullable<T> = T extends null | undefined ? never : T;
+
+//Parameters
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
+
+//ConstructorParameters
+type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never;
+
+//ReturnType
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+
+//InstanceType
+type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
