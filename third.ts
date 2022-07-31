@@ -81,9 +81,28 @@ try {
   console.error(err.response?.data);
 }
 
+//유틸리티 타입스
+interface Profile {
+    name: string,
+    age: number,
+    married: boolean,
+}
+
+const minjaeCha: Profile = {
+    name: 'minjaeCha',
+    age: 29,
+    married: false,
+}
+
+//파샬 : 타입(프로필)을 옵셔널로 만들어준다
+const newMinjae: Partial<Profile> = {
+    name: 'minjaeCha',
+    age: 29,
+}
 type Partial<T> = {
     [P in keyof T]?: T[P];
 };
+//파셜은 좋은게아님. 옵셔널되면 헷갈리기때문
 
 //Required
 type Required<T> = {
