@@ -102,49 +102,103 @@ const newMinjae: Partial<Profile> = {
 type Partial<T> = {
     [P in keyof T]?: T[P];
 };
-//파셜은 좋은게아님. 옵셔널되면 헷갈리기때문
+//파셜은 좋은게아님. 옵셔널되면 헷갈리기때문. 그래서 Pick과 Omit을 쓴다.
 
-//Required
-type Required<T> = {
-    [P in keyof T]-?: T[P];
-};
-
-//ReadOnly
-type Readonly<T> = {
-    readonly [P in keyof T]: T[P];
-};
-
+//픽 : 알려진 타입만 지정
+const newMinjaePick: Pick<Profile, 'name' | 'age'> = {
+    name: 'minjaeCha',
+    age: 29,
+}
 //Pick
 type Pick<T, K extends keyof T> = {
     [P in K]: T[P];
 };
 
-//Record
+//오밋 : 픽의 반대, 제외시킬 타입 지정
+const newMinjaeOmit: Omit<Profile, 'married'> = {
+    name: 'minjaeCha',
+    age: 29,
+}
+//Omit
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
+
+
+interface optionalProfile {
+    name?: string,
+    age?: number,
+    married?: boolean,
+}
+
+//Required : 누군가 타입이나 인터페이스를 옵셔널로 해놓았는데, 필수로 지정하고 싶을때
+type Required<T> = {
+    [P in keyof T]-?: T[P];
+}; // -? : 모디파이어 = 옵셔널들을 전부 제거하라 라는 표시
+const newMinjaeRequired: Required<optionalProfile> = {
+    name: 'minjaeCha',
+    age: 29,
+    married: false,
+}
+
+//ReadOnly : 수정못하게 막고 싶음
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P];
+};
+const newMinjaeReadOnly: Readonly<Profile> = {
+    name: 'minjaeCha',
+    age: 29,
+    married: false,
+}
+newMinjaeReadOnly.name = 'manjae'; // 읽기 전용속성 에러
+
+//Record : 객체를 표현하는 한가지 방법
 type Record<K extends keyof any, T> = {
     [P in K]: T;
 };
+const R : Record<string, number> = { a: 3, b: 5, c: 8 };
 
-//Exclude
+//Exclude : 키를 제외
 type Exclude<T, U> = T extends U ? never : T;
-
-//Extract
+//Extract : 키를 추출 (Exclude의 반대 삼항연산자 확인)
 type Extract<T, U> = T extends U ? T : never;
 
-//Omit
+type Animal = 'Cat' | 'Dog' | 'Human';
+type Mammal = Exclude<Animal, 'Human'>;
+type Man = Extract<Animal, 'Human'>;
 
-type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
-
-//NonNullable
+//NonNullable : 타입 또는 인터페이스에 null이나 undefined가 있을 때 null, undefined를 빼고 가져옴
 type NonNullable<T> = T extends null | undefined ? never : T;
+type nullAndUndefined = string | null | undefined | number | boolean;
+type noneNullAndUndefined = NonNullable<nullAndUndefined>;
 
-//Parameters
-type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
+//Parameters : 함수에 있는 파라미터의 타입을 꺼내올수 있음
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never; // 인퍼 = 추론하다
+function zip( x: number, y: string, z: boolean ) : {x : number, y: string, z: boolean} {
+    return {x, y, z}
+}
+type Params = Parameters<typeof zip>;
+type First = Params[0]
 
-//ConstructorParameters
+//ReturnType : 함수에 있는 리턴값의 타입을 꺼내올수 있음
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any; // 잘보면 Parameters의 인퍼 추론 위치만 바꿈
+type Returns = ReturnType<typeof zip>;
+
+
+//abstract new~ 를 보면 생성자 관련 타입스 인걸 알수 있다
+class cons {
+    a: string = "123";
+    b: number = 123;
+    c: boolean = true;
+    constructor(a: string, b: number , c:boolean ) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+}
+const c = new cons('123', 456, true);
+//ConstructorParameters : constructor의 파라미터 타입을 꺼내올수 있음
 type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never;
+type ConstructorParametersC = ConstructorParameters<typeof cons>
 
-//ReturnType
-type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
-
-//InstanceType
+//InstanceType : instance의 타입을 꺼내올 수 있음
 type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
+type I = InstanceType<typeof cons>
